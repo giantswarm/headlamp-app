@@ -133,7 +133,7 @@ jobs:
           git push "${remote_repo}" HEAD:${{ needs.gather_facts.outputs.branch }}
 
           # Create PR
-          gh pr create --title "Automated update from upstream"  --label "automated-update" --assignee ${{ github.actor }} --base ${{ env.base }} --head ${{ needs.gather_facts.outputs.branch }} --body-file - << EOF
+          gh pr create --title "Automated update from upstream" --assignee ${{ github.actor }} --base ${{ env.base }} --head ${{ needs.gather_facts.outputs.branch }} --body-file - << EOF
           This PR was created by the \`update-chart\` GitHub Actions workflow.
           - [ ] **:warning: All tests are passing**
           - [ ] **:warning: The CHANGELOG.md file has been updated**

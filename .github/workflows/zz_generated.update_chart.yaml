@@ -95,7 +95,7 @@ jobs:
       - name: Push changes
         env:
           GITHUB_TOKEN: "${{ secrets.TAYLORBOT_GITHUB_ACTION }}"
-          head: "${{ needs.gather_facts.outputs.head }}"
+          head: "${{ needs.gather_facts.outputs.branch }}"
         run: |
           if git diff --quiet; then
             echo "No changes to commit"

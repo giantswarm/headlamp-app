@@ -10,8 +10,8 @@
 # It also updates the Chart.yaml dependencies on local subcharts update.
 
 name: Create Update Chart PR
-on: push
-  #push:
+on:
+  push:
   #  branches:
   #    - 'main#update-chart'
   #    - 'master#update-chart'

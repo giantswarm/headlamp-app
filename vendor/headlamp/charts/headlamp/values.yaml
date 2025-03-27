@@ -9,7 +9,7 @@ image:
   # -- Container image registry
   registry: ghcr.io
   # -- Container image name
-  repository: kinvolk/headlamp
+  repository: headlamp-k8s/headlamp
   # -- Image pull policy. One of Always, Never, IfNotPresent
   pullPolicy: IfNotPresent
   # -- Container image tag, If "" uses appVersion in Chart.yaml
@@ -29,6 +29,34 @@ config:
   # -- base url path at which headlamp should run
   baseURL: ""
   oidc:
+    # Option 1:
+    # @param config.oidc.secret - OIDC secret configuration
+    # If you want to use an existing secret, set create to false and provide the name of the secret.
+    # If you want to create a new secret, set create to true and provide the name of the secret.
+    # Also provide the values for clientID, clientSecret, issuerURL, and scopes.
+    # Example:
+    # config:
+    #   oidc:
+    #     secret:
+    #       create: true
+    #       name: oidc
+    secret:
+      # -- Generate OIDC secret. If true, will generate a secret using .config.oidc.
+      create: true
+      # -- Name of the OIDC secret.
+      name: oidc
+
+    # Option 2:
+    # @param config.oidc - OIDC env configuration
+    # If you want to set the OIDC configuration directly, set the following values.
+    # Example:
+    # config:
+    #   oidc:
+    #     clientID: "clientID"
+    #     clientSecret: "clientSecret"
+    #     issuerURL: "issuerURL"
+    #     scopes: "scopes"
+
     # -- OIDC client ID
     clientID: ""
     # -- OIDC client secret
@@ -37,8 +65,33 @@ config:
     issuerURL: ""
     # -- OIDC scopes to be used
     scopes: ""
+
+    # Option 3:
+    # @param config.oidc - External OIDC secret configuration
+    # If you want to use an external secret for OIDC configuration, enable this option.
+    # Provide the name of the secret to use.
+    # Example:
+    # config:
+    #   oidc:
+    #     secret:
+    #       create: false
+    #     externalSecret:
+    #       enabled: true
+    #       name: oidc
+    externalSecret:
+      enabled: false
+      name: ""
   # -- directory to look for plugins
   pluginsDir: "/headlamp/plugins"
+  # Extra arguments that can be given to the container. See charts/headlamp/README.md for more information.
+  extraArgs: []
+
+# -- An optional list of environment variables
+# env:
+#   - name: KUBERNETES_SERVICE_HOST
+#     value: "localhost"
+#   - name: KUBERNETES_SERVICE_PORT
+#     value: "6443"
 
 serviceAccount:
   # -- Specifies whether a service account should be created
@@ -51,6 +104,9 @@ serviceAccount:
 clusterRoleBinding:
   # -- Specified whether a cluster role binding should be created
   create: true
+  # -- Set name of the Cluster Role with limited permissions from you cluster
+  # for example - clusterRoleName: user-ro
+  clusterRoleName: cluster-admin
   # -- Annotations to add to the cluster role binding
   annotations: {}
 
@@ -64,19 +120,28 @@ podSecurityContext:
 
 # -- Headlamp containers Security Context
 securityContext:
-  {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsNonRoot: true
+  privileged: false
+  runAsUser: 100
+  runAsGroup: 101
 
 service:
   # -- Kubernetes Service type
   type: ClusterIP
   # -- Kubernetes Service port
   port: 80
+  # -- Kubernetes Service clusterIP
+  clusterIP: ""
+  # -- Kubernetes Service loadBalancerIP
+  loadBalancerIP: ""
+  # -- Kubernetes Service loadBalancerSourceRanges
+  loadBalancerSourceRanges: []
+  # -- Kubernetes Service Nodeport
+  nodePort: null
 
 # -- Headlamp containers volume mounts
 volumeMounts: []
@@ -107,13 +172,24 @@ ingress:
   # -- Annotations for Ingress resource
   annotations:
     {}
-    # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+
+  # -- Additional labels to add to the Ingress resource
+  labels: {}
+    # app.kubernetes.io/part-of: traefik
+    # environment: prod
+
+  # -- Ingress class name. replacement for the deprecated "kubernetes.io/ingress.class" annotation
+  ingressClassName: ""
+
   # -- Hostname(s) for the Ingress resource
+  # Please refer to https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/#IngressSpec for more information.
   hosts:
     []
     # - host: chart-example.local
-    #   paths: []
+    #   paths:
+    #   - path: /
+    #     type: ImplementationSpecific
   # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
@@ -142,3 +218,18 @@ tolerations: []
 
 # -- Affinity settings for pod assignment
 affinity: {}
+
+# -- Additional Kubernetes manifests to be deployed. Include the manifest as nested YAML.
+extraManifests: []
+# - apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: my-config
+#   data:
+#     key: value
+# - apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: my-config-too
+#   data:
+#     key: value

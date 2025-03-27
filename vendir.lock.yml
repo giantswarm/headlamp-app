@@ -2,10 +2,10 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: 'app: Bump version to 0.12.0'
-      sha: b839940a67f190d6f4a195172beaf59ff8645839
+      commitTitle: 'app: Bump version to 0.29.0...'
+      sha: bbefb6e8c6b2abac5dd3923c4254498e1eb7864f
       tags:
-      - v0.12.0
+      - v0.29.0
     path: headlamp
   path: vendor
 kind: LockConfig

@@ -116,7 +116,6 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.TAYLORBOT_GITHUB_ACTION }}"
           base: "${{ needs.gather_facts.outputs.base }}"
-          remote_repo: "https://${{ github.actor }}:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/${{ github.repository }}.git"
         run: |
           if git diff --quiet; then
             echo "No changes to commit"
@@ -128,12 +127,13 @@ jobs:
           git config --local user.name "taylorbot"
 
           # Commit and push changes
+          git checkout -b automated-update
           git add -A
           git commit -m "Automated update from upstream"
-          git push "${remote_repo}" HEAD:${{ needs.gather_facts.outputs.branch }}
+          git push --set-upstream origin HEAD:automated-update
 
           # Create PR
-          gh pr create --title "Automated update from upstream" --assignee ${{ github.actor }} --base ${{ env.base }} --head ${{ needs.gather_facts.outputs.branch }} --body-file - << EOF
+          gh pr create --title "Automated update from upstream" --assignee ${{ github.actor }} --base ${{ env.base }} --head automated-update --body-file - << EOF
           This PR was created by the \`update-chart\` GitHub Actions workflow.
           - [ ] **:warning: All tests are passing**
           - [ ] **:warning: The CHANGELOG.md file has been updated**

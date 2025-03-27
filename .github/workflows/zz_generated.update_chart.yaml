@@ -130,10 +130,10 @@ jobs:
           git checkout -b automated-update
           git add -A
           git commit -m "Automated update from upstream"
-          git push --set-upstream origin HEAD:automated-update
+          git push --force --set-upstream origin HEAD:automated-update
 
           # Create PR
-          gh pr create --title "Automated update from upstream" --assignee ${{ github.actor }} --base ${{ env.base }} --head automated-update --body-file - << EOF
+          gh pr create --title "Automated update from upstream" --assignee "${{ github.actor }}" --base "${{ env.base }}" --head automated-update --body-file - << EOF
           This PR was created by the \`update-chart\` GitHub Actions workflow.
           - [ ] **:warning: All tests are passing**
           - [ ] **:warning: The CHANGELOG.md file has been updated**

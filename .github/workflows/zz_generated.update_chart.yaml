@@ -112,24 +112,27 @@ jobs:
           fi
 
           make update-chart APPLICATION="${chart}"
-      - name: Set up git identity
-        run: |
-          git config --local user.email "dev@giantswarm.io"
-          git config --local user.name "taylorbot"
-      - name: Create update commit
-        run: |
-          git add -A
-          git commit -m "Automated update from upstream"
       - name: Push changes
-        env:
-          remote_repo: "https://${{ github.actor }}:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/${{ github.repository }}.git"
-        run: |
-          git push "${remote_repo}" HEAD:${{ needs.gather_facts.outputs.branch }}
-      - name: Update PR
         env:
           GITHUB_TOKEN: "${{ secrets.TAYLORBOT_GITHUB_ACTION }}"
           base: "${{ needs.gather_facts.outputs.base }}"
+          remote_repo: "https://${{ github.actor }}:${{ secrets.TAYLORBOT_GITHUB_ACTION }}@github.com/${{ github.repository }}.git"
         run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # Setup git identify
+          git config --local user.email "dev@giantswarm.io"
+          git config --local user.name "taylorbot"
+
+          # Commit and push changes
+          git add -A
+          git commit -m "Automated update from upstream"
+          git push "${remote_repo}" HEAD:${{ needs.gather_facts.outputs.branch }}
+
+          # Create PR
           gh pr create --title "Automated update from upstream"  --label "automated-update" --assignee ${{ github.actor }} --base ${{ env.base }} --head ${{ needs.gather_facts.outputs.branch }} --body-file - << EOF
           This PR was created by the \`update-chart\` GitHub Actions workflow.
           - [ ] **:warning: All tests are passing**

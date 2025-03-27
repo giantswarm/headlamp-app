@@ -95,7 +95,7 @@ jobs:
       - name: Push changes
         env:
           GITHUB_TOKEN: "${{ secrets.TAYLORBOT_GITHUB_ACTION }}"
-          base: "${{ needs.gather_facts.outputs.base }}"
+          head: "${{ needs.gather_facts.outputs.head }}"
         run: |
           if git diff --quiet; then
             echo "No changes to commit"
@@ -113,7 +113,7 @@ jobs:
           git push --force --set-upstream origin HEAD:automated-update
 
           # Create PR
-          gh pr create --title "Automated update from upstream" --assignee "${{ github.actor }}" --base "${{ env.base }}" --head automated-update --body-file - << EOF
+          gh pr create --title "Automated update from upstream" --assignee "${{ github.actor }}" --head "${{ env.head }}" --head automated-update --body-file - << EOF
           This PR was created by the \`update-chart\` GitHub Actions workflow.
           - [ ] **:warning: All tests are passing**
           - [ ] **:warning: The CHANGELOG.md file has been updated**

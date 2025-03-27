@@ -20,6 +20,10 @@ on:
       branch:
         required: true
         type: string
+  schedule:
+    # At 09:00 on Monday.
+    - cron:  '0 9 * * 1'
+
 jobs:
   debug_info:
     name: Debug info

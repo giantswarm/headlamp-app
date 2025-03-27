@@ -25,7 +25,7 @@ lint-chart: check-env ## Runs ct against the default chart.
 
 update-chart: bin/vendir ## Sync chart with upstream repo.
 	@echo "====> $@"
-	bin/vendir sync
+	bin/vendir sync --yes
 	$(MAKE) update-deps
 
 update-deps:
@@ -37,6 +37,7 @@ $(DEPS):
 	$(YQ) -i e "with(.dependencies[]; select(.name == \"$$dep_name\") | .version = \"$$new_version\")" $(APPLICATION)/Chart.yaml
 
 bin/vendir:
+	mkdir -p bin
 	wget --quiet https://github.com/vmware-tanzu/carvel-vendir/releases/download/v0.32.2/vendir-linux-amd64 -O bin/vendir
 	echo "f5d3cbbd8135d2d48f4f007b8a933bd60b2a827d68f4001c5d1774392fa7b3f2  bin/vendir" | sha256sum -c -
 	chmod +x bin/vendir

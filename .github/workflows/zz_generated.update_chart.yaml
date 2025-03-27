@@ -10,11 +10,11 @@
 # It also updates the Chart.yaml dependencies on local subcharts update.
 
 name: Create Update Chart PR
-on:
-  push:
-    branches:
-      - 'main#update-chart'
-      - 'master#update-chart'
+on: push
+  #push:
+  #  branches:
+  #    - 'main#update-chart'
+  #    - 'master#update-chart'
   workflow_call:
     inputs:
       branch:

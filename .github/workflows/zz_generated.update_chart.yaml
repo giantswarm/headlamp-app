@@ -12,13 +12,14 @@
 name: Create Update Chart PR
 on:
   push:
+  # Run manually
   workflow_dispatch:
     inputs:
       branch:
         required: true
         type: string
+  # Run every Monday at 09:00
   schedule:
-    # At 09:00 on Monday.
     - cron:  '0 9 * * 1'
 
 jobs:

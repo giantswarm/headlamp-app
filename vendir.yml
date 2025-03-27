@@ -7,6 +7,8 @@ directories:
   - path: headlamp
     git:
       url: https://github.com/headlamp-k8s/headlamp
-      ref: origin/main
+      refSelection:
+        semver:
+          constraints: ">0.12.0"
     includePaths:
     - charts/headlamp/**/*

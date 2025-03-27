@@ -11,7 +11,11 @@
 
 name: Create Update Chart PR
 on:
+  # Run on push to special branches
   push:
+    branches:
+      - 'main#update-chart'
+      - 'master#update-chart'
   # Run manually
   workflow_dispatch:
     inputs:

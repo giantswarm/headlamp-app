@@ -69,12 +69,6 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ needs.gather_facts.outputs.branch }}
-      - name: Install vendir
-        run: |
-          wget https://github.com/vmware-tanzu/carvel-vendir/releases/download/v0.32.2/vendir-linux-amd64 -O /tmp/vendir
-          SHA_VENDIR=`shasum -a 256 /tmp/vendir | cut -d ' ' -f1`
-          [ "$SHA_VENDIR" != "f5d3cbbd8135d2d48f4f007b8a933bd60b2a827d68f4001c5d1774392fa7b3f2" ] && echo "invalid vendir binary" && exit 1
-          sudo mv /tmp/vendir /usr/local/bin/vendir && chmod a+x /usr/local/bin/vendir
       - name: Run update
         run: |
           # Define chart_dir

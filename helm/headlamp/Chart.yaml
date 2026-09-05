@@ -9,9 +9,9 @@ description: Please add description
 
 home: https://github.com/giantswarm/headlamp
 
-# If you have an icon/logo, you should add it to https://github.com/giantswarm/web-assets
-# and set the final URL as a value here and uncomment.
-#icon: https://s.giantswarm.io/app-icons/example/1/light.svg
+# Upstream Headlamp icon, served from https://github.com/giantswarm/web-assets
+# (assets/app-icons/headlamp/1). app-build-suite fails build-chart without one.
+icon: https://s.giantswarm.io/app-icons/headlamp/1/light.svg
 
 sources:
 - https://github.com/some-org/some-repo

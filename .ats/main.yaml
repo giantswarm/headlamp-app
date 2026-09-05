@@ -1,8 +1,12 @@
-# app-test-suite config for the generated `execute-chart-tests` CI job.
+# app-test-suite (ats >= 1.0) config for the generated execute-chart-tests CircleCI job.
+# ats creates a kind cluster, installs the packaged chart with `helm upgrade --install
+# --wait` and runs `uv run pytest -m smoke` in tests/ats.
 #
-# All test steps are skipped: app-test-suite's smoke scenario runs pytest tests
-# from `tests/ats`, which this repo does not have yet (the directory only holds
-# the generated dependency files). Skipping keeps the job green while build-chart
-# still validates that the chart packages cleanly. Add `tests/ats/test_*.py`
-# smoke scenarios and drop `smoke` from skip-steps to enable real deploy testing.
+# All cluster steps stay skipped: the chart renders no resources yet (helm/headlamp/
+# templates holds only _helpers.tpl; the upstream chart vendir.yml points at is not synced
+# into it), so a smoke would have nothing to wait for and would only prove that an empty
+# release installs. ats 1.x also fails `validate` on a test directory without a .py file,
+# which is why the steps are skipped explicitly. Once the chart ships the headlamp
+# Deployment: add tests/ats/test_smoke.py (cluster reachable + wait_for_deployments_to_run
+# on it, see giantswarm/web-assets), set app-tests-deploy-namespace, drop `smoke` below.
 skip-steps: [smoke, functional, upgrade]
